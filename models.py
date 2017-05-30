@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker, relationship
 
 from config import config
@@ -18,7 +18,7 @@ class Survey(Base):
     public_hash_id = Column(String, unique=True)
     title = Column(String)
     status = Column(String)
-    nps = Column(String)
+    nps = Column(Integer)
     brand = Column(String)
     # TODO: add JSON field for raw response?
 
@@ -27,8 +27,11 @@ class Answer(Base):
     __tablename__ = 'answer'
     id = Column(Integer, primary_key=True)
     survey_id = Column(Integer, ForeignKey('survey.id'))
+    recipient_id = Column(String)
     score = Column(Integer)
     comment = Column(String)
+    inserted_at = Column(DateTime)
+    inserted_at_str = Column(String)
 
     survey = relationship('Survey')
     # TODO: add JSON field for raw response?
