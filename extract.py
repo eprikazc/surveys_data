@@ -66,14 +66,19 @@ def filter_survey(survey):
 
 
 def store_surveys_to_db(db_session, requests_session):
-    existing_hash_ids = [
-        obj.public_hash_id
+    surveys_by_hash_id = {
+        obj.public_hash_id: obj
         for obj in db_session.query(Survey).all()
-    ]
+    }
     for survey in get_surveys(requests_session):
         if not filter_survey(survey):
             continue
-        if survey['public_hash_id'] not in existing_hash_ids:
+        survey_obj = surveys_by_hash_id.get(survey['public_hash_id'])
+        if survey_obj:
+            survey_obj.title = survey['title']
+            survey_obj.status = survey['status']
+            db_session.commit()
+        else:
             db_session.add(Survey(
                 title=survey['title'],
                 public_hash_id=survey['public_hash_id'],
