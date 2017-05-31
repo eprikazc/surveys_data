@@ -13,7 +13,7 @@ Session = sessionmaker(bind=engine)
 
 
 class Survey(Base):
-    __tablename__ = 'survey'
+    __tablename__ = 'zenloop_survey'
     id = Column(Integer, primary_key=True)
     public_hash_id = Column(String, unique=True)
     title = Column(String)
@@ -24,9 +24,9 @@ class Survey(Base):
 
 
 class Answer(Base):
-    __tablename__ = 'answer'
+    __tablename__ = 'zenloop_answer'
     id = Column(Integer, primary_key=True)
-    survey_id = Column(Integer, ForeignKey('survey.id'))
+    survey_id = Column(Integer, ForeignKey('zenloop_survey.id'))
     recipient_id = Column(String)
     score = Column(Integer)
     comment = Column(String)
