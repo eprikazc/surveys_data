@@ -1,0 +1,14 @@
+[API]
+email = zenloop-account-email@mail.com
+password = password
+
+[DB]
+connection_string = postgresql://db_username:db_password@db_host:db_port/db_name
+
+[DEFAULT]
+debug = true
+; if setting below is true, retrieve answers for all the time (by default only "today" is retrieved)
+; all_time = true
+; if setting below is set, only surveys with specified titles will be processed
+; survey_titles = Title1
+;   Title2
