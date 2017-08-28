@@ -4,6 +4,8 @@ import requests
 
 from datetime import datetime, timedelta
 
+from raven import Client
+
 from config import config
 from models import Answer, Survey, Session
 
@@ -146,4 +148,11 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    try:
+        run()
+    except Exception:
+        if 'SENTRY' in config:
+            if 'DSN' in config['SENTRY']:
+                client = Client(config['SENTRY']['DSN'])
+                client.captureException()
+        raise
