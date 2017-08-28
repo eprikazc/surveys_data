@@ -70,9 +70,11 @@ def store_surveys_to_db(db_session, requests_session):
         obj.public_hash_id: obj
         for obj in db_session.query(Survey).all()
     }
+    res = []
     for survey in get_surveys(requests_session):
         if not filter_survey(survey):
             continue
+        res.append(survey['public_hash_id'])
         survey_obj = surveys_by_hash_id.get(survey['public_hash_id'])
         if survey_obj:
             survey_obj.title = survey['title']
@@ -85,10 +87,14 @@ def store_surveys_to_db(db_session, requests_session):
                 status=survey['status'],
             ))
             db_session.commit()
+    return res
 
 
-def store_answers(db_session, requests_session):
-    for survey in db_session.query(Survey):
+def store_answers(db_session, requests_session, survey_ids=None):
+    query = db_session.query(Survey)
+    if survey_ids:
+        query = query.filter(Survey.public_hash_id.in_(survey_ids))
+    for survey in query:
         response = requests_session.get(
             URLS['answers'] % survey.public_hash_id)
         data = response.json()
@@ -135,8 +141,8 @@ def store_answers(db_session, requests_session):
 def run():
     db_session = Session()
     requests_session = get_requests_session()
-    store_surveys_to_db(db_session, requests_session)
-    store_answers(db_session, requests_session)
+    survey_ids = store_surveys_to_db(db_session, requests_session)
+    store_answers(db_session, requests_session, survey_ids)
 
 
 if __name__ == '__main__':
